@@ -180,62 +180,156 @@ async function convert(paths, promptIfEmpty = true) {
 	}
 }
 
+// 从拖拽事件获取文件路径的辅助函数
+async function getFilePathsFromDragEvent(e) {
+	const items = e.dataTransfer.items;
+	const files = e.dataTransfer.files;
+	const paths = [];
+	
+	// 方法1: 使用 Electron 的 webUtils API (最可靠)
+	if (window.electronAPI && window.electronAPI.getPathForFile) {
+		if (files && files.length > 0) {
+			for (let i = 0; i < files.length; i++) {
+				const file = files[i];
+				try {
+					const path = window.electronAPI.getPathForFile(file);
+					if (path) {
+						console.log('通过 electronAPI 获取到路径:', path);
+						paths.push(path);
+					}
+				} catch (e) {
+					console.error('获取文件路径失败:', e);
+				}
+			}
+		}
+	}
+	
+	// 方法2: 尝试从 items 获取
+	if (paths.length === 0 && items && items.length > 0) {
+		for (let i = 0; i < items.length; i++) {
+			const item = items[i];
+			if (item.kind === 'file') {
+				const file = item.getAsFile();
+				if (file) {
+					// 在 Electron 环境中，文件对象应该有 path 属性
+					if (file.path) {
+						console.log('从 item 获取到路径:', file.path);
+						paths.push(file.path);
+					} else if (window.electronAPI && window.electronAPI.getPathForFile) {
+						// 尝试使用 electronAPI
+						try {
+							const path = window.electronAPI.getPathForFile(file);
+							if (path) {
+								console.log('从 item 通过 electronAPI 获取到路径:', path);
+								paths.push(path);
+							}
+						} catch (e) {
+							console.error('获取文件路径失败:', e);
+						}
+					} else if (file.name) {
+						console.log('文件名:', file.name, '- 需要完整路径');
+					}
+				}
+			}
+		}
+	}
+	
+	// 方法3: 如果上面没有获取到，尝试从 files 获取 path 属性
+	if (paths.length === 0 && files && files.length > 0) {
+		for (let i = 0; i < files.length; i++) {
+			const file = files[i];
+			if (file.path) {
+				console.log('从 files 获取到路径:', file.path);
+				paths.push(file.path);
+			}
+		}
+	}
+	
+	return paths;
+}
+
 // 设置拖拽区域事件
 if (dropzone) {
-	let dragCounter = 0; // 用于处理子元素的 dragenter/dragleave
+	let dragCounter = 0;
+	
+	// 阻止默认行为
+	['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+		dropzone.addEventListener(eventName, (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+		});
+		
+		document.body.addEventListener(eventName, (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+		});
+	});
 	
 	// 拖拽进入
-	dropzone.addEventListener('dragenter', (e) => {
-		e.preventDefault();
-		e.stopPropagation();
+	dropzone.addEventListener('dragenter', () => {
 		dragCounter++;
 		dropzone.classList.add('hover');
 	});
 	
-	// 拖拽悬停
-	dropzone.addEventListener('dragover', (e) => {
-		e.preventDefault();
-		e.stopPropagation();
-	});
-	
 	// 拖拽离开
-	dropzone.addEventListener('dragleave', (e) => {
-		e.preventDefault();
-		e.stopPropagation();
+	dropzone.addEventListener('dragleave', () => {
 		dragCounter--;
 		if (dragCounter === 0) {
 			dropzone.classList.remove('hover');
 		}
 	});
 	
-	// 拖拽释放
+	// 拖拽释放 - 核心处理
 	dropzone.addEventListener('drop', async (e) => {
-		e.preventDefault();
-		e.stopPropagation();
 		dragCounter = 0;
 		dropzone.classList.remove('hover');
 		
-		// 获取拖拽的文件
-		const files = e.dataTransfer?.files;
-		const paths = [];
+		console.log('Drop event:', e.dataTransfer);
+		console.log('Files:', e.dataTransfer.files);
+		console.log('Items:', e.dataTransfer.items);
 		
-		if (files && files.length > 0) {
-			for (let i = 0; i < files.length; i++) {
-				const file = files[i];
-				// 在 Electron 中，File 对象有 path 属性
-				if (file.path) {
-					console.log('从拖拽获取到文件路径:', file.path);
-					paths.push(file.path);
-				} else {
-					console.warn('文件没有 path 属性:', file.name, '可能不在 Electron 环境中');
-				}
-			}
-		}
+		// 获取文件路径
+		const paths = await getFilePathsFromDragEvent(e);
 		
 		if (paths.length > 0) {
-			await convert(paths, false);
+			console.log('获取到文件路径:', paths);
+			
+			// 通过主进程验证文件
+			if (window.api?.handleFileDrop) {
+				try {
+					const result = await window.api.handleFileDrop(paths);
+					if (result.error) {
+						toastManager.show(result.error, 'warning');
+					} else if (result.paths && result.paths.length > 0) {
+						await convert(result.paths, false);
+					}
+				} catch (error) {
+					console.error('处理拖拽文件出错:', error);
+					toastManager.show('处理拖拽文件出错', 'error');
+				}
+			} else {
+				// 直接转换
+				await convert(paths, false);
+			}
 		} else {
-			console.error('无法从拖拽事件中提取文件路径');
+			// 尝试另一种方法：获取拖拽的文本（可能包含文件路径）
+			const text = e.dataTransfer.getData('text/plain');
+			if (text) {
+				console.log('拖拽文本:', text);
+				// 检查是否是文件路径
+				if (text.endsWith('.png') || text.endsWith('.PNG')) {
+					const paths = [text];
+					if (window.api?.handleFileDrop) {
+						const result = await window.api.handleFileDrop(paths);
+						if (result.paths && result.paths.length > 0) {
+							await convert(result.paths, false);
+							return;
+						}
+					}
+				}
+			}
+			
+			console.error('无法获取文件路径');
 			toastManager.show('未识别到拖拽的文件，请确保拖拽的是 PNG 文件', 'warning');
 		}
 	});
@@ -253,26 +347,13 @@ if (dropzone) {
 	});
 }
 
-// 监听主进程转发的拖拽文件路径（处理 Finder 直接拖入窗口的情况）
-window.addEventListener('message', (event) => {
-	if (event.data?.type === 'dropped-files' && Array.isArray(event.data.paths)) {
-		console.log('收到主进程转发的文件路径:', event.data.paths);
-		convert(event.data.paths, false);
-	}
-});
-
-// 防止整个窗口的默认拖拽行为
-document.addEventListener('dragover', (e) => {
-	e.preventDefault();
-	e.dataTransfer.dropEffect = 'copy';
-});
-
-document.addEventListener('drop', (e) => {
-	e.preventDefault();
-});
-
 // 初始化时加载配置
 loadConfig();
 
 // 导出供全局使用
 window.toastManager = toastManager;
+
+// 调试信息
+console.log('拖拽处理已初始化');
+console.log('window.api:', window.api);
+console.log('window.electronAPI:', window.electronAPI);

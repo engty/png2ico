@@ -13,22 +13,14 @@ const createWindow = () => {
 		width: 520,
 		height: 520,
 		resizable: false,
-		webPreferences: {
-			preload: path.join(process.cwd(), 'electron', 'preload.cjs'),
-			contextIsolation: true,
-			nodeIntegration: false,
-			webSecurity: false,
-		},
 		titleBarStyle: 'default',
 		center: true,
-		// 启用拖拽文件
 		acceptFirstMouse: true,
 		webPreferences: {
 			preload: path.join(process.cwd(), 'electron', 'preload.cjs'),
 			contextIsolation: true,
 			nodeIntegration: false,
 			webSecurity: false,
-			// 允许拖拽文件
 			experimentalFeatures: true,
 		},
 	});

@@ -1,4 +1,19 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, webUtils } = require('electron');
+
+// 暴露文件路径获取功能
+contextBridge.exposeInMainWorld('electronAPI', {
+	getPathForFile: (file) => {
+		// 使用 webUtils.getPathForFile 获取文件路径
+		try {
+			if (webUtils && webUtils.getPathForFile) {
+				return webUtils.getPathForFile(file);
+			}
+		} catch (e) {
+			console.error('获取文件路径失败:', e);
+		}
+		return null;
+	}
+});
 
 contextBridge.exposeInMainWorld('api', {
 	convertFiles: (paths, options) => ipcRenderer.invoke('convert-files', {

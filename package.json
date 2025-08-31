@@ -40,9 +40,15 @@
       "electron/**/*",
       "ui/**/*",
       "dist/**/*",
-      "node_modules/**/*",
       "package.json"
     ],
+    "extraResources": [
+      {
+        "from": "ui",
+        "to": "ui"
+      }
+    ],
+    "asar": false,
     "mac": {
       "category": "public.app-category.graphics-design",
       "icon": "build/icon.icns",

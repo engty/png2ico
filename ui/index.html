@@ -9,23 +9,52 @@
 <body>
 	<div class="container">
 		<div class="card">
-			<h1><img src="./ico.png" class="app-icon" aria-hidden="true" /> PNG → ICO 转换器</h1>
+			<h1>
+				<img src="./ico.png" class="app-icon" aria-hidden="true" /> 
+				PNG → ICO 转换器
+			</h1>
+			<p class="subtitle">轻松将 PNG 图片转换为多尺寸 ICO 图标文件</p>
+			
 			<section class="settings">
 				<div id="sizes-group">
-					<span>包含尺寸：</span>
-					<label><input type="checkbox" name="sizeOpt" value="16" /> 16</label>
-					<label><input type="checkbox" name="sizeOpt" value="32" /> 32</label>
-					<label><input type="checkbox" name="sizeOpt" value="48" /> 48</label>
-					<label><input type="checkbox" name="sizeOpt" value="64" /> 64</label>
-					<label><input type="checkbox" name="sizeOpt" value="128" /> 128</label>
-					<label><input type="checkbox" name="sizeOpt" value="256" /> 256</label>
+					<label>
+						<input type="checkbox" name="sizeOpt" value="16" />
+						<span>16×16</span>
+					</label>
+					<label>
+						<input type="checkbox" name="sizeOpt" value="32" checked />
+						<span>32×32</span>
+					</label>
+					<label>
+						<input type="checkbox" name="sizeOpt" value="48" />
+						<span>48×48</span>
+					</label>
+					<label>
+						<input type="checkbox" name="sizeOpt" value="64" checked />
+						<span>64×64</span>
+					</label>
+					<label>
+						<input type="checkbox" name="sizeOpt" value="128" />
+						<span>128×128</span>
+					</label>
+					<label>
+						<input type="checkbox" name="sizeOpt" value="256" />
+						<span>256×256</span>
+					</label>
 				</div>
 			</section>
+			
 			<section class="dropzone" id="dropzone">
-				拖拽 PNG 到此处，或点击选择
+				<div class="dropzone-content">
+					<div class="dropzone-text">拖拽 PNG 图片到此处</div>
+					<div class="dropzone-hint">或点击选择文件</div>
+				</div>
 			</section>
 		</div>
 	</div>
+	
+	<div id="toast-container"></div>
+	
 	<script src="./main.js"></script>
 </body>
 </html>

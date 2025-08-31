@@ -8,4 +8,5 @@ contextBridge.exposeInMainWorld('api', {
 	openPngDialog: () => ipcRenderer.invoke('dialog-open'),
 	getConfig: () => ipcRenderer.invoke('get-config'),
 	setConfig: (cfg) => ipcRenderer.invoke('set-config', cfg),
+	handleFileDrop: (paths) => ipcRenderer.invoke('handle-file-drop', paths),
 });

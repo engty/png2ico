@@ -1,0 +1,149 @@
+# 依赖目录
+node_modules/
+.npm-cache/
+.pnpm-store/
+
+# 构建输出
+dist/
+build/
+out/
+*.js.map
+*.d.ts
+
+# Electron 打包输出
+release/
+release-builds/
+*.dmg
+*.exe
+*.deb
+*.AppImage
+*.snap
+*.rpm
+*.zip
+*.tar.gz
+*.nupkg
+*.blockmap
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+.Trash-*
+
+# IDE 配置
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.atom/
+*.iml
+
+# 日志文件
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# 环境变量
+.env
+.env.local
+.env.*.local
+.env.production
+
+# 测试覆盖率
+coverage/
+*.lcov
+.nyc_output/
+
+# 临时文件
+*.tmp
+*.temp
+.tmp/
+.temp/
+tmp/
+temp/
+
+# 缓存文件
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.docusaurus/
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# TypeScript
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# 配置存储
+config.json
+settings.json
+user-preferences.json
+
+# 调试文件
+.vscode-test/
+*.pid
+*.seed
+*.pid.lock
+
+# macOS 特定
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows 特定
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux 特定
+.directory
+.Trash-*
+.nfs*
+
+# 项目特定（根据需要调整）
+.promptx/
+.spec-workflow/
+.npmrc
+
+# 保留 src 源代码但排除编译后的 JS
+src/**/*.js
+!src/**/*.test.js
+!src/**/*.spec.js
+
+# 证书和密钥（重要！）
+*.pem
+*.p12
+*.key
+*.crt
+*.cer
+private/

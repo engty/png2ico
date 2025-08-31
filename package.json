@@ -10,15 +10,68 @@
     "test": "vitest run --reporter=dot",
     "test:watch": "vitest",
     "desktop": "electron .",
-    "clean": "rm -rf dist .npm-cache .pnpm-store"
+    "clean": "rm -rf dist .npm-cache .pnpm-store",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win",
+    "dist:all": "electron-builder -mw"
   },
   "devDependencies": {
     "electron": "^32.3.3",
+    "electron-builder": "^25.1.8",
     "typescript": "^5.9.2",
     "vitest": "^2.1.9"
   },
   "dependencies": {
     "png-to-ico": "^2.1.2",
     "sharp": "^0.33.5"
+  },
+  "build": {
+    "appId": "com.engty.png2ico",
+    "productName": "PNG to ICO Converter",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "electron/**/*",
+      "ui/**/*",
+      "dist/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.graphics-design",
+      "icon": "build/icon.icns",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64", "arm64"]
+        }
+      ]
+    },
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
   }
 }

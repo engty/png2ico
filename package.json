@@ -1,0 +1,24 @@
+{
+  "name": "png-to-ico-converter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "electron/main.js",
+  "scripts": {
+    "build": "tsc -p .",
+    "typecheck": "tsc -p . --noEmit",
+    "test": "vitest run --reporter=dot",
+    "test:watch": "vitest",
+    "desktop": "electron .",
+    "clean": "rm -rf dist .npm-cache .pnpm-store"
+  },
+  "devDependencies": {
+    "electron": "^32.3.3",
+    "typescript": "^5.9.2",
+    "vitest": "^2.1.9"
+  },
+  "dependencies": {
+    "png-to-ico": "^2.1.2",
+    "sharp": "^0.33.5"
+  }
+}

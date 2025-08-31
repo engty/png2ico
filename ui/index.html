@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>PNG → ICO 转换器</title>
+	<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+	<div class="container">
+		<div class="card">
+			<h1><img src="./ico.png" class="app-icon" aria-hidden="true" /> PNG → ICO 转换器</h1>
+			<section class="settings">
+				<div id="sizes-group">
+					<span>包含尺寸：</span>
+					<label><input type="checkbox" name="sizeOpt" value="16" /> 16</label>
+					<label><input type="checkbox" name="sizeOpt" value="32" /> 32</label>
+					<label><input type="checkbox" name="sizeOpt" value="48" /> 48</label>
+					<label><input type="checkbox" name="sizeOpt" value="64" /> 64</label>
+					<label><input type="checkbox" name="sizeOpt" value="128" /> 128</label>
+					<label><input type="checkbox" name="sizeOpt" value="256" /> 256</label>
+				</div>
+			</section>
+			<section class="dropzone" id="dropzone">
+				拖拽 PNG 到此处，或点击选择
+			</section>
+		</div>
+	</div>
+	<script src="./main.js"></script>
+</body>
+</html>
